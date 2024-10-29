@@ -27,11 +27,15 @@ export async function createTask({ task, important, path }: Params) {
 }
 
 export async function fetchTasks() {
-  await connectToDB();
+  try {
+    await connectToDB();
 
-  const tasks = await Task.find({});
-
-  return tasks;
+    // Perform the query and handle potential timeouts or connection issues
+    const tasks = await Task.find({});
+    return tasks;
+  } catch (error: any) {
+   throw new Error(`Failed to fetch Tasks : ${error.message}`);
+  }
 }
 
 interface Params {
