@@ -8,6 +8,7 @@ interface Params {
   task: string;
   important: boolean;
   path: string;
+  author: string;
 }
 
 export async function createTask({ task, important, path }: Params) {
