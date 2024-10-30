@@ -5,6 +5,7 @@ import Banner from "../components/shared/Banner";
 import { AnimatePresence } from "framer-motion";
 
 export default async function Home() {
+  
   const result = await fetchTasks();
 
   return (
