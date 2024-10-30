@@ -26,7 +26,7 @@ export async function createTask({ task, important, path }: Params) {
   }
 }
 
-export async function fetchTasks() {
+export async function fetchTasks(retries = 3) {
   try {
     await connectToDB();
 
@@ -34,24 +34,28 @@ export async function fetchTasks() {
     const tasks = await Task.find({});
     return tasks;
   } catch (error: any) {
-   throw new Error(`Failed to fetch Tasks : ${error.message}`);
+    if (retries > 0) {
+      // Retry the operation
+      return fetchTasks(retries - 1);
+    } else {
+      throw new Error(`Failed to fetch Tasks : ${error.message}`);
+    }
   }
 }
 
 interface Params {
-  id: string,
-  path: string
+  id: string;
+  path: string;
 }
-export async function deleteTask({id, path}: Params) {
+export async function deleteTask({ id, path }: Params) {
   await connectToDB();
   try {
-    const taskToDelete = await Task.findById(id)
+    const taskToDelete = await Task.findById(id);
 
-    await Task.deleteOne(taskToDelete)
+    await Task.deleteOne(taskToDelete);
 
-    revalidatePath(path)
-    
+    revalidatePath(path);
   } catch (error: any) {
-    throw new Error(`Failed to delete Task : ${error.message}`)
+    throw new Error(`Failed to delete Task : ${error.message}`);
   }
 }
