@@ -1,13 +1,8 @@
-import { fetchTasks } from "@/lib/actions/task.action";
 import AddTask from "../components/forms/AddTask";
-import Tasks from "../components/shared/Tasks";
 import Banner from "../components/shared/Banner";
-import { AnimatePresence } from "framer-motion";
+import TaskList from "../components/shared/TaskList";
 
 export default async function Home() {
-  
-  const result = await fetchTasks();
-
   return (
     <>
       <div className="flex flex-col  ">
@@ -32,25 +27,7 @@ export default async function Home() {
             </div>
 
             <div className=" bg-white/10 border border-gray-500/20 p-6 max-md:mb-20 rounded-3xl">
-              {result?.length === 0 ? (
-                <p> No Tasks Here yet</p>
-              ) : (
-                <>
-                  <AnimatePresence>
-                    {result?.map((data) => {
-                      return (
-                        <Tasks
-                          key={data._id}
-                          id={data._id.toString()}
-                          task={data.task}
-                          createdAt={data.createdAt}
-                          important={data.important}
-                        />
-                      );
-                    })}
-                  </AnimatePresence>
-                </>
-              )}
+              <TaskList />
             </div>
           </section>
         </section>

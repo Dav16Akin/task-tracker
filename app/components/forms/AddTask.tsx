@@ -15,11 +15,17 @@ import {
 import { Input } from "../ui/input";
 import { Checkbox } from "../ui/checkbox";
 import { taskValidation, TTaskValidation } from "@/lib/types/types";
-import { createTask } from "@/lib/actions/task.action";
 import { usePathname } from "next/navigation";
 
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/state/store";
+import { addTask } from "@/state/Features/taskSlice";
+
 const AddTask = () => {
-  const pathname = usePathname();
+  const taskList = useSelector((state: RootState) => state.tasks.tasklist);
+
+  const dispatch = useDispatch();
+
 
   const form = useForm<TTaskValidation>({
     resolver: zodResolver(taskValidation),
@@ -29,14 +35,13 @@ const AddTask = () => {
     },
   });
 
-  const onSubmit = async (data: TTaskValidation) => {
-    await createTask({
-      task: data.task,
-      important: data.important,
-      path: pathname,
-    });
-
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  const onSubmit = (data: TTaskValidation) => {
+    dispatch(
+      addTask({
+        taskList,
+        itemToAdd: { task: data.task, important: data.important },
+      })
+    );
 
     form.reset();
   };

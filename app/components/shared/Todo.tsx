@@ -1,18 +1,29 @@
-import { AnimatePresence, useAnimate, usePresence } from "framer-motion";
-import React, { useEffect, useState } from "react";
-import { FiClock, FiPlus, FiTrash2 } from "react-icons/fi";
-import { motion } from "framer-motion";
+"use client";
 
-interface Props { 
+import { useAnimate, usePresence } from "framer-motion";
+import React, { useEffect } from "react";
+import { FiTrash2 } from "react-icons/fi";
+import { motion } from "framer-motion";
+import { useDispatch, useSelector } from "react-redux";
+import { removeTask } from "@/state/Features/taskSlice";
+import { RootState } from "@/state/store";
+
+interface Props {
   id: string;
   task: string;
   important: boolean;
-  removeTask: (id: string) => void;
 }
 
-const Todo = ({ id, task, important, removeTask }: Props) => {
+const Todo = ({ id, task, important }: Props) => {
+  const dispatch = useDispatch();
   const [isPresent, safeToRemove] = usePresence();
   const [scope, animate] = useAnimate();
+
+  const taskList = useSelector((state: RootState) => state.tasks.tasklist);
+
+  const removeTaskFromList = () => {
+    dispatch(removeTask({ taskList, itemToRemove: { id, task, important } }));
+  };
 
   useEffect(() => {
     if (!isPresent) {
@@ -59,18 +70,18 @@ const Todo = ({ id, task, important, removeTask }: Props) => {
     <motion.div
       ref={scope}
       layout
-      className="relative flex w-full items-center gap-3 rounded border border-zinc-700 bg-zinc-900 p-3"
+      className={`relative flex w-full items-center gap-3 rounded border border-zinc-700  p-3`}
     >
       <p
         className={`text-white transition-colors ${
-          important && "text-red-500"
+          important && "bg-clip-text text-transparent bg-gradient-to-tl from-yellow-800 via-red-600 to-yellow-400"
         }`}
       >
         {task}
       </p>
       <div className="ml-auto flex gap-1.5">
         <button
-          onClick={() => removeTask(id)}
+          onClick={() => removeTaskFromList()}
           className="rounded bg-red-300/20 px-1.5 py-1 text-xs text-red-300 transition-colors hover:bg-red-600 hover:text-red-200"
         >
           <FiTrash2 />
